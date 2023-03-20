@@ -12,23 +12,30 @@
 				<div class="column bg-gray-200 p-5 rounded min-w-[250px]">
 					<header class="font-bold mb-4">
 						<DragHandler />
-						{{ column.title }}
+						<input
+							class="bg-transparent focus:bg-white rounded px-1 w-4/5"
+							@keyup.enter="($event.target as HTMLInputElement).blur()"
+							type="text"
+							v-model="column.title"
+						/>
 					</header>
 					<draggable 
 						v-model="column.tasks"
-						:group="{name: 'tasks', pull: alt ? 'clone' : true }"
+						:group="{ name: 'tasks', pull: alt ? 'clone' : true }"
 						:animation="150"
 						handle=".drag-handler"
 						item-key="id"
 					>
 						<template #item="{ element: task }: { element: Task }">
 							<div>
-								<TrelloBoardTask :task="task" />
+								<TrelloBoardTask 
+									:task="task" 
+									@delete="column.tasks = column.tasks.filter(t=>t.id !== $event)" />
 							</div>
 						</template>
 					</draggable>
 					<footer>
-						<button class="text-gray-500">+ Add a Card</button>
+						<NewTask @add="column.tasks.push($event)"/>
 					</footer>
 				</div>
 			</template>
